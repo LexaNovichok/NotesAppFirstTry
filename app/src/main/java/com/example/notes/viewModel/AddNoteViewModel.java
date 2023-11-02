@@ -14,6 +14,7 @@ import com.example.notes.model.Note;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Action;
@@ -35,7 +36,7 @@ public class AddNoteViewModel extends AndroidViewModel {
     }
 
     public void saveNote(Note note) {
-        Disposable disposable = notesDao.add(note)
+        Disposable disposable = addNoteRx(note)
                 //.delay(1, TimeUnit.SECONDS) //задержка перед тем как выполнятся дальнейшие операторы
                 .subscribeOn(Schedulers.io()) //чтобы действие выполнялось в фоновом потоке
                 .observeOn(AndroidSchedulers.mainThread())
@@ -46,6 +47,15 @@ public class AddNoteViewModel extends AndroidViewModel {
             }
         });
         compositeDisposable.add(disposable);
+    }
+
+    private Completable addNoteRx(Note note) {
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Throwable {
+                notesDao.add(note);
+            }
+        });
     }
 
     @Override

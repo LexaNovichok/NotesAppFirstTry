@@ -16,15 +16,15 @@ import io.reactivex.rxjava3.core.Single;
 public interface NotesDao { //класс отвечает за выполнение операций с таблицей заметок
 
     @Query("SELECT *FROM notes")
-    Single<List<Note>> getNote();
+    List<Note> getNote();
 
     @Insert
-    Completable add(Note note);
+    void add(Note note);
 
     @Query("DELETE FROM notes WHERE id = :id")
-    Completable remove(int id);
+    void remove(int id);
 
     @Query("DELETE FROM notes")
-    Completable deleteAll();
+    void deleteAll();
 
 }
