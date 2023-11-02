@@ -11,10 +11,19 @@ import com.example.notes.dao.NotesDao;
 import com.example.notes.database.NoteDatabase;
 import com.example.notes.model.Note;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Action;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class AddNoteViewModel extends AndroidViewModel {
 
     private NotesDao notesDao;
     private MutableLiveData<Boolean> shouldCloseScreen = new MutableLiveData<>();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public AddNoteViewModel(@NonNull Application application) {
         super(application);
@@ -26,13 +35,22 @@ public class AddNoteViewModel extends AndroidViewModel {
     }
 
     public void saveNote(Note note) {
-        Thread thread = new Thread(new Runnable() {
+        Disposable disposable = notesDao.add(note)
+                //.delay(1, TimeUnit.SECONDS) //задержка перед тем как выполнятся дальнейшие операторы
+                .subscribeOn(Schedulers.io()) //чтобы действие выполнялось в фоновом потоке
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action() { //чтобы отреагировать на событие завершения операции у объекта completable
             @Override
-            public void run() {
-                notesDao.add(note);
+            public void run() throws Throwable {
                 shouldCloseScreen.postValue(true);
             }
         });
-        thread.start();
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        compositeDisposable.dispose();
     }
 }

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         notesAdapter = new NotesAdapter();
         rcView.setAdapter(notesAdapter);
 
+        //При нажатии на элемент списка
         notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
             @Override
             public void onNoteClick(Note note) {
@@ -112,11 +113,14 @@ public class MainActivity extends AppCompatActivity {
         clearAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 viewModel.deleteAll();
+
             }
         });
 
 
+        //Подписка на изменение элемента
         viewModel.getNotes().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
@@ -128,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        viewModel.refreshList();
     }
 
     private void initViews() {

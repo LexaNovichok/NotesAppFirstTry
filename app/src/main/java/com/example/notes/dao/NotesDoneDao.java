@@ -9,17 +9,20 @@ import com.example.notes.model.Note;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+
 @Dao
 public interface NotesDoneDao {
     @Query("SELECT *FROM notes")
-    LiveData<List<Note>> getNote();
+    Single<List<Note>> getNote();
 
     @Insert
-    void add(Note note);
+    Completable add(Note note);
 
     @Query("DELETE FROM notes WHERE id = :id")
-    void remove(int id);
+    Completable remove(int id);
 
     @Query("DELETE FROM notes")
-    void deleteAll();
+    Completable deleteAll();
 }

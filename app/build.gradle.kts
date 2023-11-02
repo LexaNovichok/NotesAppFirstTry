@@ -51,7 +51,7 @@ dependencies {
     implementation("androidx.room:room-rxjava3:$room_version")
 
 
-    
-    implementation("io.reactivex.rxjava2:rxjava:2.2.19")
+
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
 
 }

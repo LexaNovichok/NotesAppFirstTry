@@ -24,7 +24,6 @@ import com.example.notes.viewModel.MainViewModel;
 public class AddNoteActivity extends AppCompatActivity {
 
     private EditText editTextNote;
-    private RadioGroup radioGroupPriority;
     private RadioButton radioButtonLow;
     private RadioButton radioButtonMedium;
     private Button buttonSave;
@@ -79,7 +78,6 @@ public class AddNoteActivity extends AppCompatActivity {
 
     private void initViews() {
         editTextNote = findViewById(R.id.editTextNote);
-        radioGroupPriority = findViewById(R.id.radioGroupPriority);
         radioButtonLow = findViewById(R.id.radioButtonLow);
         radioButtonMedium = findViewById(R.id.radioButtonMedium);
         buttonSave = findViewById(R.id.buttonSave);

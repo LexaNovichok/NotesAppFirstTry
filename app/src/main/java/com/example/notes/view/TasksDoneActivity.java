@@ -43,6 +43,14 @@ public class TasksDoneActivity extends AppCompatActivity {
         notesAdapter = new NotesAdapter();
         rcViewDone.setAdapter(notesAdapter);
 
+        //При нажатии на элемент списка
+        notesAdapter.setOnNoteClickListener(new NotesAdapter.OnNoteClickListener() {
+            @Override
+            public void onNoteClick(Note note) {
+
+            }
+        });
+
         List<Note> notes = new ArrayList<>();
         notes.add(new Note("123", 2));
         notes.add(new Note("124", 1));
@@ -74,8 +82,8 @@ public class TasksDoneActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 Note note = notesAdapter.getNote().get(position);
-
                 tasksDoneViewModel.remove(note);
+
             }
         });
         itemTouchHelper.attachToRecyclerView(rcViewDone);
@@ -91,6 +99,12 @@ public class TasksDoneActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tasksDoneViewModel.refreshList();
+    }
 
     private void initViews() {
         goToTasksToDoButton = findViewById(R.id.tasks_need_to_do_button);
