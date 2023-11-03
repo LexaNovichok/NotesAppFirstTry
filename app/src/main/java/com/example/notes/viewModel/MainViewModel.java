@@ -36,76 +36,50 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Note>> getNotes() {
-        return notes;
+        return noteDatabase.notesDao().getNote();
     }
 
 
-    public void refreshList() {
-        Disposable disposable = getNotesRx()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Note>>() {
-                    @Override
-                    public void accept(List<Note> notesFromDb) throws Throwable {
-                        notes.setValue(notesFromDb);
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    private Single<List<Note>> getNotesRx() {
-        return Single.fromCallable(new Callable<List<Note>>() {
-            @Override
-            public List<Note> call() throws Exception {
-                return noteDatabase.notesDao().getNote();
-            }
-        });
-    }
 
 
     public void remove(Note note) {
-        Disposable disposable = removeRx(note)
+        Disposable disposable = noteDatabase.notesDao().remove(note.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Throwable {
                         Log.d("Remove", "Note removed");
-                        refreshList();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d("MainViewModel", "Error remove");
                     }
                 });
         compositeDisposable.add(disposable);
     }
 
-    private Completable removeRx(Note note) {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Throwable {
-                noteDatabase.notesDao().remove(note.getId());
-            }
-        });
-    }
+
 
     public void deleteAll() {
-        Disposable disposable = deleteAllRx()
+        Disposable disposable = noteDatabase.notesDao().deleteAll()
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Throwable {
-                        refreshList();
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d("MainViewModel", "Error deleteAll");
                     }
                 });
         compositeDisposable.add(disposable);
     }
 
-    private Completable deleteAllRx() {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() throws Throwable {
-                noteDatabase.notesDao().deleteAll();
-            }
-        });
-    }
+
 
     @Override
     protected void onCleared() {

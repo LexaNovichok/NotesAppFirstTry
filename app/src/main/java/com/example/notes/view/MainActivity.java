@@ -129,11 +129,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel.refreshList();
-    }
 
     private void initViews() {
         goToTasksDoneButton = findViewById(R.id.task_done_button);
